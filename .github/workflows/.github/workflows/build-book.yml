@@ -1,0 +1,29 @@
+name: Build Book PDF
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-full imagemagick
+
+      - name: Compile Book
+        run: |
+          pdflatex -interaction=nonstopmode book.tex
+          bibtex book
+          pdflatex -interaction=nonstopmode book.tex
+          pdflatex -interaction=nonstopmode book.tex
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: book-pdf
+          path: book.pdf
